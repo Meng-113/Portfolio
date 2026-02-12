@@ -1,13 +1,142 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+@keyframes heroButtonPulse {
+  0%,
+  100% {
+    box-shadow: 0 10px 24px rgba(6, 182, 212, 0.2);
+  }
+  50% {
+    box-shadow: 0 14px 30px rgba(6, 182, 212, 0.35);
+  }
+}
+
+@keyframes heroButtonGlow {
+  0%,
+  100% {
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.3);
+  }
+  50% {
+    box-shadow: 0 14px 30px rgba(56, 189, 248, 0.2);
+  }
+}
+
+@keyframes typewriterCaretBlink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply relative inline-flex items-center justify-center overflow-hidden rounded-full border font-semibold tracking-tight transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f172a];
+    transform: translateY(0) scale(1);
+  }
+
+  .btn-md {
+    @apply px-7 py-3 text-lg;
+  }
+
+  .btn-sm {
+    @apply px-5 py-3 text-sm;
+  }
+  .btn-xs {
+    @apply px-4 py-2 text-xs;
+  }
+  .btn-logo {
+    @apply px-3 py-3;
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      110deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.34) 50%,
+      transparent 80%
+    );
+    transform: translateX(-120%);
+    transition: transform 700ms ease;
+  }
+
+  .btn:hover::before {
+    transform: translateX(120%);
+  }
+
+  .btn:active {
+    transform: translateY(1px) scale(0.97);
+  }
+
+  .btn-label {
+    @apply relative z-10;
+  }
+
+  .btn-primary {
+    @apply border-cyan-500 bg-cyan-500 text-white;
+    animation: heroButtonPulse 2.8s ease-in-out infinite;
+  }
+
+  .btn-primary:hover {
+    @apply -translate-y-0.5 bg-cyan-400;
+  }
+
+  .btn-secondary {
+    @apply border-slate-500/60 bg-slate-800/50 text-white backdrop-blur-sm;
+    animation: heroButtonGlow 3.2s ease-in-out infinite;
+  }
+
+  .btn-secondary:hover {
+    @apply -translate-y-0.5 border-cyan-300/60 bg-slate-700/70;
+  }
+
+  .typewriter-caret {
+    @apply inline-block h-[1em] w-[3px] rounded-sm bg-cyan-300;
+    animation: typewriterCaretBlink 1s steps(1, end) infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn-primary,
+  .btn-secondary {
+    animation: none;
+    transition: none;
+  }
+
+  .btn::before {
+    transition: none;
+  }
+
+  .typewriter-caret {
+    animation: none;
+    opacity: 1;
+  }
 }
