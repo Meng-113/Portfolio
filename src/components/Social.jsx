@@ -18,8 +18,6 @@ const Social = ({ socials }) => {
         const key = `${item.name}-${item.url}-${index}`;
         const iconFromName = iconByName[String(item.name || '').toLowerCase()];
         const iconSrc = item.urlImage || iconFromName;
-        const fallbackLabel = String(item.name || '?').slice(0, 2).toUpperCase();
-
         return (
           <Button
             key={key}
@@ -28,15 +26,11 @@ const Social = ({ socials }) => {
             size="logo"
             ariaLabel={`View ${item.name} profile`}
           >
-            {iconSrc ? (
-              <img
-                src={iconSrc}
-                alt={item.name}
-                className="inline-block h-6 w-6 filter brightness-0 invert rounded-sm"
-              />
-            ) : (
-              <span className="text-xs font-semibold">{fallbackLabel}</span>
-            )}
+            <img
+              src={iconSrc}
+              alt={item.name}
+              className="inline-block h-6 w-6 filter brightness-0 invert rounded-sm"
+            />
           </Button>
         );
       })}

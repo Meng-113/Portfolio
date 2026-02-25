@@ -53,7 +53,11 @@ const Home = ({ data }) => {
         <div className="mx-auto w-full max-w-sm">
           <div className="card-surface relative aspect-square overflow-hidden rounded-full p-3">
             <div className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-cyan-500 to-sky-600 text-4xl font-bold text-white shadow-soft">
-              CK
+              <img
+                src="https://i.pinimg.com/1200x/17/43/da/1743da1b83c1cde33a6555ef24bdded9.jpg"
+                alt="Profile"
+                className="h-full w-full rounded-full object-cover"
+              />
             </div>
           </div>
         </div>

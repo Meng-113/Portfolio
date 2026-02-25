@@ -5,14 +5,10 @@ import About from '../Layouts/Home/About';
 import Projects from '../Layouts/Home/Projects';
 import Contact from '../Layouts/Home/Contact';
 import Footer from '../Layouts/Home/Footer';
-import Background from '../components/Background';
 
 const PortfolioPage = ({ data, isLoading, loadError }) => {
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0f172a]">
-      <div className="absolute inset-0">
-        <Background />
-      </div>
       <div className="relative z-10">
         <Navbar navLinks={data.navLinks} />
         {isLoading ? (

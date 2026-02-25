@@ -215,7 +215,6 @@ const Dashboard = ({ data, onSave, isLoading, loadError }) => {
     : isSaving
       ? 'text-cyan-200'
       : 'text-emerald-300';
-
   return (
     <DashboardLayout
       isLoading={isLoading}
