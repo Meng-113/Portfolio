@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 const defaultItems = [
@@ -31,7 +30,7 @@ const Navbar = ({ navLinks }) => {
   };
 
   return (
-    <nav className="flex mx-auto items-center bg-[#0f172a] px-6 py-5 border-b-2 dark:border-slate-700/70">
+    <nav className=" flex mx-auto items-center bg-[#0f172a] px-6 py-5 border-b-2 dark:border-slate-700/70 w-full fixed top-0 z-50">
       <ul className="flex w-[80%] mx-auto justify-end items-center sm:gap-10 gap-5 text-white font-normal flex-wrap">
         {navItems.map((item) => (
           <li key={`${item.label}-${item.href}`}>
@@ -40,11 +39,6 @@ const Navbar = ({ navLinks }) => {
             </a>
           </li>
         ))}
-        <li>
-          <Link to="/dashboard" className={navbarStyle}>
-            Dashboard
-          </Link>
-        </li>
       </ul>
     </nav>
   );

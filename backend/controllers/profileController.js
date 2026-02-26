@@ -35,7 +35,10 @@ export const updateProfile = async (req, res, next) => {
     about,
     contact_detail,
     contact_email,
+    url_profile_image,
+    url_profile,
   } = req.body;
+  const profileImage = url_profile ?? url_profile_image;
   try {
     const updatedProfile = await updateProfileService(
       id,
@@ -47,6 +50,7 @@ export const updateProfile = async (req, res, next) => {
       about,
       contact_detail,
       contact_email,
+      profileImage,
     );
     handleResponse(res, 200, 'Profile updated successfully', updatedProfile);
   } catch (error) {

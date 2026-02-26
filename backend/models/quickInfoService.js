@@ -1,66 +1,49 @@
-import pool from '../config/db.js';
+import prisma from '../config/prisma.js';
 
 export const createQuickInfoService = async (profile_id, label, value) => {
-  const result = await pool.query(
-    `
-    INSERT INTO quick_info (profile_id, label, value, sort_order)
-    VALUES (
-      $1, $2, $3,
-      COALESCE((SELECT MAX(sort_order) + 1 FROM quick_info WHERE profile_id = $1), 0)
-    )
-    RETURNING *
-    `,
-    [profile_id, label, value]
-  );
-  return result.rows[0];
+  return prisma.quickInfo.create({
+    data: {
+      profile_id: Number(profile_id),
+      label,
+      value,
+    },
+  });
 };
 
-export const getQuickInfosService = async (profile_id) => {
-  // Use profile_id, not just id
-  // Allow optional profile_id filtering if needed, or mandatory.
-  // Based on other services, we pass profile_id.
-  const result = await pool.query(
-    `
-    SELECT * FROM quick_info
-    WHERE profile_id = $1
-    ORDER BY sort_order, id
-    `,
-    [profile_id]
-  );
-  return result.rows;
-};
+export const getQuickInfosService = async (profile_id) =>
+  prisma.quickInfo.findMany({
+    where: { profile_id: Number(profile_id) },
+    orderBy: [{ sort_order: 'asc' }, { id: 'asc' }],
+  });
 
-// Keeping getQuickInfoService (single item) if it was used, but renamed or commented?
-// The user likely wants the standard CRUD.
-export const getQuickInfoByIdService = async (id) => {
-  const result = await pool.query(
-    `SELECT * FROM quick_info WHERE id = $1`,
-    [id]
-  );
-  return result.rows[0];
-};
+export const getQuickInfoByIdService = async (id) =>
+  prisma.quickInfo.findUnique({
+    where: { id: Number(id) },
+  });
 
 export const updateQuickInfoService = async (id, profile_id, label, value) => {
-  const result = await pool.query(
-    `
-    UPDATE quick_info
-    SET label = $1, value = $2
-    WHERE id = $3 AND profile_id = $4
-    RETURNING *
-    `,
-    [label, value, id, profile_id]
-  );
-  return result.rows[0];
+  const updated = await prisma.quickInfo.updateMany({
+    where: { id: Number(id), profile_id: Number(profile_id) },
+    data: { label, value },
+  });
+
+  if (!updated.count) return null;
+
+  return prisma.quickInfo.findUnique({
+    where: { id: Number(id) },
+  });
 };
 
 export const deleteQuickInfoService = async (id, profile_id) => {
-  const result = await pool.query(
-    `
-    DELETE FROM quick_info
-    WHERE id = $1 AND profile_id = $2
-    RETURNING *
-    `,
-    [id, profile_id]
-  );
-  return result.rows[0];
+  const existing = await prisma.quickInfo.findFirst({
+    where: { id: Number(id), profile_id: Number(profile_id) },
+  });
+
+  if (!existing) return null;
+
+  await prisma.quickInfo.delete({
+    where: { id: Number(id) },
+  });
+
+  return existing;
 };

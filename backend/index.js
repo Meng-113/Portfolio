@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import pool from './config/db.js';
+import prisma from './config/prisma.js';
 import profileRoutes from './routes/profileRoute.js';
 import quickInfoRoutes from './routes/quickInfoRoute.js';
 import skillRoutes from './routes/skillRoute.js';
@@ -20,8 +20,8 @@ app.use('/api', projectRoutes);
 app.use('/api', socialRoutes);
 
 app.get('/', async (req, res) => {
-  const result = await pool.query('SELECT current_database()');
-  res.send(`Database name is ${result.rows[0].current_database}`);
+  await prisma.$connect();
+  res.send('Backend is running with Prisma');
 });
 
 app.listen(port, () => {

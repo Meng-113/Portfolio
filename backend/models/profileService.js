@@ -1,8 +1,9 @@
-import pool from '../config/db.js';
+import prisma from '../config/prisma.js';
 
 export const getProfileService = async (id) => {
-  const result = await pool.query(`Select * from profile where id=$1`, [id]);
-  return result.rows[0];
+  return prisma.profile.findUnique({
+    where: { id: Number(id) },
+  });
 };
 
 export const updateProfileService = async (
@@ -15,20 +16,25 @@ export const updateProfileService = async (
   about,
   contact_detail,
   contact_email,
+  url_profile,
 ) => {
-  const result = await pool.query(
-    `UPDATE profile SET name=$1, title=$2, location=$3, about_title=$4, intro=$5, about=$6, contact_detail=$7, contact_email=$8 WHERE id=$9 RETURNING *`,
-    [
-      name,
-      title,
-      location,
-      about_title,
-      intro,
-      about,
-      contact_detail,
-      contact_email,
-      id,
-    ],
-  );
-  return result.rows[0];
+  try {
+    return await prisma.profile.update({
+      where: { id: Number(id) },
+      data: {
+        name,
+        title,
+        location,
+        about_title,
+        intro,
+        about,
+        contact_detail,
+        contact_email,
+        url_profile,
+      },
+    });
+  } catch (error) {
+    if (error.code === 'P2025') return null;
+    throw error;
+  }
 };

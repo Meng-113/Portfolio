@@ -1,6 +1,7 @@
 import SectionCard from '../../components/SectionCard';
 import SectionSaveRow from '../../components/SectionSaveRow';
 import {
+  dashboardFileInputClassName,
   dashboardInputClassName,
   dashboardTextareaClassName,
 } from './dashboardStyles';
@@ -8,6 +9,7 @@ import {
 const BasicInfoSection = ({
   formData,
   updateField,
+  updateProfileImageFromFile,
   isSaving,
   savingSection,
   status,
@@ -48,7 +50,31 @@ const BasicInfoSection = ({
             onChange={(event) => updateField('aboutTitle', event.target.value)}
           />
         </label>
+        <label className="text-sm md:col-span-2">
+          Profile Image URL
+          <input
+            className={dashboardInputClassName}
+            value={formData.profileImage || ''}
+            onChange={(event) => updateField('profileImage', event.target.value)}
+          />
+        </label>
+        <label className="text-sm md:col-span-2">
+          Upload Profile Image
+          <input
+            type="file"
+            accept="image/*"
+            onChange={updateProfileImageFromFile}
+            className={dashboardFileInputClassName}
+          />
+        </label>
       </div>
+      {formData.profileImage ? (
+        <img
+          src={formData.profileImage}
+          alt="Profile preview"
+          className="mt-3 h-20 w-20 rounded-full object-cover"
+        />
+      ) : null}
 
       <div className="mt-4 space-y-4">
         <label className="block text-sm">

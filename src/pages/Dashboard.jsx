@@ -12,7 +12,15 @@ import {
 } from '../utils/portfolioData';
 
 const SECTION_FIELDS = {
-  basic: ['name', 'title', 'location', 'aboutTitle', 'intro', 'about'],
+  basic: [
+    'name',
+    'title',
+    'location',
+    'profileImage',
+    'aboutTitle',
+    'intro',
+    'about',
+  ],
   quickInfo: ['quickInfo'],
   skills: ['skillImages'],
   projects: ['projects'],
@@ -89,6 +97,23 @@ const Dashboard = ({ data, onSave, isLoading, loadError }) => {
 
   const updateField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const updateProfileImageFromFile = (event) => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== 'string') {
+        return;
+      }
+      updateField('profileImage', reader.result);
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
   };
 
   const updateQuickInfoValue = (index, value) => {
@@ -225,6 +250,7 @@ const Dashboard = ({ data, onSave, isLoading, loadError }) => {
       <BasicInfoSection
         formData={formData}
         updateField={updateField}
+        updateProfileImageFromFile={updateProfileImageFromFile}
         isSaving={isSaving}
         savingSection={savingSection}
         status={sectionStatus.basic}

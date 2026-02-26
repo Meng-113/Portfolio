@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { normalizePortfolioData } from './portfolioData';
 
 const API_BASE_URL = 'http://localhost:3000/api';
@@ -6,20 +7,25 @@ const PROFILE_ID = 1;
 // --- Helpers ---
 
 const request = async (endpoint, options = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
-  const headers = { 'Content-Type': 'application/json', ...options.headers };
-  const config = { ...options, headers };
+  const method = options.method || 'GET';
+  const data = options.data;
 
-  const response = await fetch(url, config);
-  if (!response.ok) {
-    throw new Error(
-      `Request failed: ${response.status} ${response.statusText}`,
-    );
+  try {
+    const response = await axios({
+      url: `${API_BASE_URL}${endpoint}`,
+      method,
+      data,
+    });
+    return response.data?.data;
+  } catch (error) {
+    const status = error.response?.status;
+    const statusText = error.response?.statusText || error.message;
+    throw new Error(`Request failed: ${status || ''} ${statusText}`.trim());
   }
-  if (response.status === 204) return null;
-  const json = await response.json();
-  return json.data;
 };
+
+const pickString = (...values) =>
+  values.find((value) => typeof value === 'string' && value.length > 0) || '';
 
 const mapProfileFromBackend = (data) => {
   if (!data) return {};
@@ -28,6 +34,12 @@ const mapProfileFromBackend = (data) => {
     name: data.name,
     title: data.title,
     location: data.location,
+    profileImage: pickString(
+      data.url_profile,
+      data.url_profile_image,
+      data.profile_image,
+      data.profileImage,
+    ),
     aboutTitle: data.about_title,
     intro: data.intro,
     about: data.about,
@@ -40,6 +52,8 @@ const mapProfileToBackend = (data) => ({
   name: data.name,
   title: data.title,
   location: data.location,
+  url_profile: data.profileImage,
+  url_profile_image: data.profileImage,
   about_title: data.aboutTitle,
   intro: data.intro,
   about: data.about,
@@ -124,7 +138,7 @@ export const updateProfileSection = async (data) => {
 
   const responseData = await request(`/profile/${id}`, {
     method: 'PUT',
-    body: JSON.stringify(merged),
+    data: merged,
   });
 
   return mapProfileFromBackend(responseData);
@@ -135,11 +149,11 @@ export const updateQuickInfoSection = async (items) => {
     if (item.id) {
       await request(`/quickinfo/${item.id}`, {
         method: 'PUT',
-        body: JSON.stringify({
+        data: {
           profile_id: PROFILE_ID,
           label: item.label,
           value: item.value,
-        }),
+        },
       });
     }
   });
@@ -159,7 +173,7 @@ export const updateSkillImagesSection = async (imageUrls) => {
     toDelete.map((e) =>
       request(`/skill-image/${e.id}`, {
         method: 'DELETE',
-        body: JSON.stringify({ profile_id: PROFILE_ID }),
+        data: { profile_id: PROFILE_ID },
       }),
     ),
   );
@@ -167,7 +181,7 @@ export const updateSkillImagesSection = async (imageUrls) => {
     toAdd.map((u) =>
       request(`/skill-image`, {
         method: 'POST',
-        body: JSON.stringify({ profile_id: PROFILE_ID, image_url: u }),
+        data: { profile_id: PROFILE_ID, image_url: u },
       }),
     ),
   );
@@ -188,7 +202,7 @@ export const updateProjectsSection = async (projects) => {
     toDelete.map((id) =>
       request(`/project/${id}`, {
         method: 'DELETE',
-        body: JSON.stringify({ profile_id: PROFILE_ID }),
+        data: { profile_id: PROFILE_ID },
       }),
     ),
   );
@@ -199,12 +213,12 @@ export const updateProjectsSection = async (projects) => {
       if (p.id && existingIds.includes(p.id)) {
         return request(`/project/${p.id}`, {
           method: 'PUT',
-          body: JSON.stringify(payload),
+          data: payload,
         });
       } else {
         return request(`/project`, {
           method: 'POST',
-          body: JSON.stringify(payload),
+          data: payload,
         });
       }
     }),
@@ -225,7 +239,7 @@ export const updateSocialsSection = async (socials) => {
     toDelete.map((id) =>
       request(`/social/${id}`, {
         method: 'DELETE',
-        body: JSON.stringify({ profile_id: PROFILE_ID }),
+        data: { profile_id: PROFILE_ID },
       }),
     ),
   );
@@ -235,22 +249,22 @@ export const updateSocialsSection = async (socials) => {
       if (s.id && existingIds.includes(s.id)) {
         return request(`/social/${s.id}`, {
           method: 'PUT',
-          body: JSON.stringify({
+          data: {
             profile_id: PROFILE_ID,
             name: s.name,
             url: s.url,
             url_image: s.urlImage,
-          }),
+          },
         });
       } else {
         return request(`/social`, {
           method: 'POST',
-          body: JSON.stringify({
+          data: {
             profile_id: PROFILE_ID,
             name: s.name,
             url: s.url,
             url_image: s.urlImage,
-          }),
+          },
         });
       }
     }),
